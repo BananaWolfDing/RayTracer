@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+A:/RayTracer/lodepng/lodepng.cpp
+lodepng.h
+A:/RayTracer/lodepng/lodepng.h
+limits.h
+-
+stdio.h
+-
+stdlib.h
+-
+
+A:/RayTracer/lodepng/lodepng.h
+string.h
+-
+vector
+-
+string
+-
+lodepng.h
+A:/RayTracer/lodepng/lodepng.h
+iostream
+-
+lodepng.h
+A:/RayTracer/lodepng/lodepng.h
+

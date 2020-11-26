@@ -1,0 +1,4 @@
+"A:\CLion 2018.2.4\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" A:\RayTracer
+-- Configuring done
+-- Generating done
+-- Build files have been written to: A:/RayTracer/build
