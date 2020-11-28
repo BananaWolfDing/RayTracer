@@ -1,5 +1,6 @@
 #include <iostream>
 #include "RGB_Image.h"
+
 int main() {
     std::cout << "Hello, World!" << std::endl;
 

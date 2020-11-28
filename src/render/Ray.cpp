@@ -3,6 +3,8 @@
   */
 #include "Ray.h"
 
+Ray::Ray(glm::vec3 orig, glm::vec3 dirc): orig{orig}, dirc{dirc} {}
+
 glm::vec3 Ray::getOrigin() const {
     return orig;
 }

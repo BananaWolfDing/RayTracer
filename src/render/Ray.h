@@ -10,6 +10,7 @@
 class Ray {
     glm::vec3 orig, dirc;
 public:
+    Ray(glm::vec3 orig, glm::vec3 dirc);
     glm::vec3 getOrigin() const;
     glm::vec3 getDirection() const;
     glm::vec3 at(float t);
