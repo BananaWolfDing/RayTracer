@@ -5,7 +5,7 @@
 #define RAYTRACER_TRIANGLE_H
 
 
-#include "../../glm/glm.hpp"
+#include <glm/glm.hpp>
 #include "../render/HitRecord.h"
 #include "../render/Ray.h"
 #include "Object.h"

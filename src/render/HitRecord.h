@@ -4,7 +4,7 @@
 #ifndef RAYTRACER_HITRECORD_H
 #define RAYTRACER_HITRECORD_H
 
-#include "../../glm/glm.hpp"
+#include <glm/glm.hpp>
 #include "../model/Material.h"
 
 class HitRecord {

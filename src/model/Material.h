@@ -5,7 +5,7 @@
 #define RAYTRACER_MATERIAL_H
 
 
-#include "../../glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class Material {
     double shine, refl, refr;

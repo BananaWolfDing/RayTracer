@@ -4,7 +4,6 @@
 #ifndef RAYTRACER_TRACER_H
 #define RAYTRACER_TRACER_H
 
-
 #include <cstdint>
 #include <list>
 #include <atomic>
@@ -29,6 +28,7 @@ class Tracer {
 
     void Trace_thread();
     glm::vec3 trace(Ray ray);
+    glm::vec3 diffuse_specular(Ray ray, HitRecord hitRecord);
 public:
     Tracer(Scene *scene,
             RGB_Image *img,
