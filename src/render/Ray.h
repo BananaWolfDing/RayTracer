@@ -5,7 +5,7 @@
 #define RAYTRACER_RAY_H
 
 
-#include "../../glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class Ray {
     glm::vec3 orig, dirc;

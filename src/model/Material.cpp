@@ -8,6 +8,20 @@ Material::Material() {}
 Material::Material(glm::vec3 kd, glm::vec3 ks, double shine, double refl, double refr):
     kd{kd}, ks{ks}, shine{shine}, refl{refl}, refr{refr} {}
 
+Material& Material::operator=(const Material &other) {
+    if (&other == this) {
+        return *this;
+    }
+
+    this->kd = other.kd;
+    this->ks = other.ks;
+    this->refl = other.refl;
+    this->refr = other.refr;
+    this->shine = other.shine;
+
+    return *this;
+}
+
 glm::vec3 Material::diffuse() const {
     return kd;
 }

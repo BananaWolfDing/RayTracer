@@ -7,7 +7,7 @@
 
 #include "Object.h"
 
-class Sphere: Object {
+class Sphere: public Object {
     glm::vec3 pos;
     float radius;
 public:

@@ -3,6 +3,7 @@
   */
 #include <thread>
 #include <random>
+#include <algorithm>
 #include "Tracer.h"
 
 Tracer::Tracer(
@@ -41,7 +42,7 @@ void Tracer::render() {
     std::vector<std::thread> threads;
 
     for (uint8_t i = 0; i < num_thread; i++) {
-        threads.emplace_back(std::thread(&Tracer::Trace_thread));
+        threads.emplace_back(std::thread(&Tracer::Trace_thread, this));
     }
 
     for (auto &th: threads) {
@@ -67,7 +68,7 @@ void Tracer::Trace_thread() {
             if (num_sample == 1) {
                 Ray ray(eye, direction);
                 glm::vec3 color = trace(ray);
-                img->set_color(thread_row, col, color);
+                img->set_color(row, col, color);
             }
             else {
                 glm::vec3 color;
@@ -83,8 +84,65 @@ void Tracer::Trace_thread() {
                     color += trace(ray) / (float) num_sample;
                 }
 
-                img->set_color(thread_row, col, color);
+                img->set_color(row, col, color);
             }
         }
     }
+}
+
+glm::vec3 Tracer::trace(Ray ray) {
+    HitRecord record = root->hit(ray, 0, std::numeric_limits<float>::max());
+
+    if (record.isHit()) {
+        Material mat = record.getMaterial();
+        glm::vec3 ds_color = diffuse_specular(ray, record);
+        glm::vec3 rr_color = reflect_refract(ray, record);
+        glm::vec3 color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
+        return color + mat.diffuse() * ambient;
+    }
+    else {
+        return glm::vec3(0.7, 0.7, 0.7);
+    }
+}
+
+glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
+    glm::vec3 color = glm::vec3();
+    for (Light *light: lights) {
+        glm::vec3 l = glm::normalize(light->position - hitRecord.getPoint());
+        Ray ray_out(hitRecord.getPoint(), l);
+        HitRecord hit = root->hit(ray_out, 0, std::numeric_limits<float>::max());
+        if (hit.isHit()) {
+            float len_hit = glm::length(hit.getPoint() - hitRecord.getPoint());
+            float len_light = glm::length(light->position - hitRecord.getPoint());
+            if (len_hit < len_light) {
+                continue;
+            }
+        }
+
+        glm::vec3 n = hitRecord.getNormal();
+        if (glm::dot(n, ray.getDirection()) > 0) {
+            n = -n;
+        }
+
+        float specular_bright = 0;
+        float diffuse_bright = std::max(0.0f, glm::dot(l, n));
+        if (diffuse_bright > 0) {
+            glm::vec3 r = glm::normalize(ray.getDirection() - 2 * glm::dot(ray.getDirection(), n) * n);
+            glm::vec3 v = glm::normalize(eye - hitRecord.getPoint());
+            specular_bright = pow(glm::dot(r, v), hitRecord.getMaterial().shininess());
+        }
+
+        float dist = glm::length(light->position - hitRecord.getPoint());
+        glm::vec3 intensity = light->color /
+                (float) (light->falloff[0] + light->falloff[1] * dist + light->falloff[2] * dist * dist);
+
+        color += diffuse_bright * intensity * hitRecord.getMaterial().diffuse() +
+                specular_bright * intensity * hitRecord.getMaterial().specular();
+    }
+
+    return color;
+}
+
+glm::vec3 Tracer::reflect_refract(Ray ray, HitRecord hitRecord) {
+    return glm::vec3();
 }

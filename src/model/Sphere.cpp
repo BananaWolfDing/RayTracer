@@ -81,7 +81,8 @@ HitRecord Sphere::hit(Ray ray, float tmin, float tmax) {
                 return HitRecord(
                         sol.smaller,
                         ray.at(sol.smaller),
-                        ray.at(sol.smaller) - pos
+                        ray.at(sol.smaller) - pos,
+                        this->mat
                         );
             }
             else {
@@ -92,15 +93,17 @@ HitRecord Sphere::hit(Ray ray, float tmin, float tmax) {
                 return HitRecord(
                         sol.smaller,
                         ray.at(sol.smaller),
-                        ray.at(sol.smaller) - pos
-                );
+                        ray.at(sol.smaller) - pos,
+                        this->mat
+                        );
             }
             else if (sol.greater >= tmin && sol.greater <= tmax) {
                 return HitRecord(
                         sol.greater,
                         ray.at(sol.greater),
-                        ray.at(sol.greater) - pos
-                );
+                        ray.at(sol.greater) - pos,
+                        this->mat
+                        );
             }
             else {
                 return HitRecord();

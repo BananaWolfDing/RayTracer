@@ -8,7 +8,7 @@
 #include "Object.h"
 #include "Triangle.h"
 
-class Cube: Object {
+class Cube: public Object {
     glm::vec3 pos;
     float edge;
     glm::vec3 vertices[8];

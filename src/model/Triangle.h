@@ -10,7 +10,7 @@
 #include "../render/Ray.h"
 #include "Object.h"
 
-class Triangle: Object {
+class Triangle: public Object {
     glm::vec3 p1, p2, p3;
 public:
     Triangle();

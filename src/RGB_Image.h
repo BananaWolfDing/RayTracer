@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <string>
-#include "../glm/glm.hpp"
+#include <glm/glm.hpp>
 
 class RGB_Image {
     uint32_t width, height;

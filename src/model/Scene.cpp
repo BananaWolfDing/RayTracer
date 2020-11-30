@@ -2,13 +2,15 @@
   *  Author: Zhaobo Ding (me@dingzhaobo.net)
   */
 #include "Scene.h"
+#include "Sphere.h"
+
 
 HitRecord Scene::hit(Ray ray, float tmin, float tmax) {
     HitRecord res;
 
     if (leaf) {
         for (auto &obj : items) {
-            HitRecord hit = obj.hit(ray, tmin, tmax);
+            HitRecord hit = obj->hit(ray, tmin, tmax);
             if (hit.isHit() && hit.getTime() >= tmin && hit.getTime() <= tmax) {
                 if (res.isHit()) {
                     if (res.getTime() > hit.getTime()) {
@@ -43,4 +45,21 @@ HitRecord Scene::hit(Ray ray, float tmin, float tmax) {
     }
 
     return res;
+}
+
+Scene::Scene() {
+    leaf = true;
+    Sphere *s = new Sphere(glm::vec3(), 10.0f);
+    s->setMaterial(Material(
+            glm::vec3(0, 0.467, 0.9),
+            glm::vec3(0.8, 0.8, 0.8),
+            25
+            ));
+    items.push_back(s);
+}
+
+Scene::~Scene() {
+    for (Object *obj : items) {
+        delete(obj);
+    }
 }

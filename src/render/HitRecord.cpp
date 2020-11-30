@@ -5,14 +5,14 @@
 
 HitRecord::HitRecord(): hit{false} {}
 
-HitRecord::HitRecord(float t, glm::vec3 p, glm::vec3 n):
-    hit{true}, hitTime{t}, point{p}
+HitRecord::HitRecord(float t, glm::vec3 p, glm::vec3 n, Material mat):
+    hit{true}, hitTime{t}, point{p}, mat{mat}
 {
     normal = glm::normalize(n);
 }
 
 void HitRecord::setMaterial(Material mat) {
-    this.mat = mat;
+    this->mat = mat;
 }
 
 bool HitRecord::isHit() const {

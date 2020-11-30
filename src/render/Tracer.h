@@ -29,6 +29,7 @@ class Tracer {
     void Trace_thread();
     glm::vec3 trace(Ray ray);
     glm::vec3 diffuse_specular(Ray ray, HitRecord hitRecord);
+    glm::vec3 reflect_refract(Ray ray, HitRecord hitRecord);
 public:
     Tracer(Scene *scene,
             RGB_Image *img,
@@ -40,6 +41,7 @@ public:
             std::list<Light *> lights,
             bool anti_aliasing = false,
             bool multi_thread = false);
+
     void render();
 };
 

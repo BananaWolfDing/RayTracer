@@ -70,5 +70,6 @@ HitRecord Cube::hit(Ray ray, float tmin, float tmax) {
         }
     }
 
+    res.setMaterial(this->mat);
     return res;
 }

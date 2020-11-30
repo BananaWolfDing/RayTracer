@@ -1,16 +1,32 @@
 #include <iostream>
+#include <glm/glm.hpp>
 #include "RGB_Image.h"
+#include "model/Scene.h"
+#include "render/Tracer.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
     RGB_Image img(800, 800);
+    Scene scene = Scene();
 
-    for (uint32_t i = 0; i < 800; i++)
-        for (uint32_t j = 0; j < 800; j++)
-            img.set_color(i, j, glm::vec3(0.5, 0.5, 0.5));
+    float fall[3] = {1, 0, 0};
+    Light light(glm::vec3(0.8, 0.8, 0.8), glm::vec3(100, 100, 100), fall);
+    std::list<Light *> lights;
+    lights.emplace_back(&light);
 
+    Tracer tracer(
+            &scene,
+            &img,
+            glm::vec3(0, 0, 100),
+            glm::vec3(0, 0, 0),
+            glm::vec3(0, 1, 0),
+            glm::vec3(0, 0, -1),
+            50.0f,
+            lights
+            );
+
+    tracer.render();
     img.export_image("test.png");
-
     return 0;
 }

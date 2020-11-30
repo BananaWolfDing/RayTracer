@@ -35,6 +35,7 @@ HitRecord Triangle::hit(Ray ray, float tmin, float tmax) {
     return HitRecord(
                 t,
                 ray.at(t),
-                glm::cross(V1, V2)
-            );
+                glm::cross(V1, V2),
+                this->mat
+                );
 }

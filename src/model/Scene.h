@@ -12,8 +12,10 @@ class Scene {
     bool leaf;
     BoundingBox box;
     std::vector<Scene> children;
-    std::vector<Object> items;
+    std::vector<Object *> items;
 public:
+    Scene();
+    ~Scene();
     HitRecord hit(Ray ray, float tmin, float tmax);
 };
 

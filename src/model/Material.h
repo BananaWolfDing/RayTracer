@@ -14,6 +14,7 @@ class Material {
 public:
     Material();
     Material(glm::vec3 kd, glm::vec3 ks, double shine, double refl = 0, double refr = 0);
+    Material &operator=(const Material &other);
 
     glm::vec3 diffuse() const;
     glm::vec3 specular() const;

@@ -4,6 +4,9 @@
 #include "BoundingBox.h"
 #include <algorithm>
 
+BoundingBox::BoundingBox() {
+    x1 = x2 = y1 = y2 = z1 = z2 = 0;
+}
 
 BoundingBox::BoundingBox(float x1, float x2, float y1, float y2, float z1, float z2) {
     this->x1 = std::min(x1, x2);
