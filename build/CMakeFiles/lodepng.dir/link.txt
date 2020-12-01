@@ -1,2 +1,0 @@
-A:\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\ar.exe qc liblodepng.a  CMakeFiles/lodepng.dir/lodepng/lodepng.cpp.obj
-A:\mingw-w64\i686-8.1.0-posix-dwarf-rt_v6-rev0\mingw32\bin\ranlib.exe liblodepng.a
