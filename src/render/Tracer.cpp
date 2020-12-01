@@ -93,14 +93,14 @@ void Tracer::Trace_thread() {
 }
 
 glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
-    HitRecord record = root->hit(ray, 1e-5, std::numeric_limits<float>::max());
+    HitRecord record = root->hit(ray, 0, std::numeric_limits<float>::max());
 
     if (record.isHit()) {
         Material mat = record.getMaterial();
         glm::vec3 ds_color = diffuse_specular(ray, record);
         glm::vec3 color;
         if (secondary < secondary_limit) {
-            glm::vec3 rr_color = reflect_refract(ray, record, secondary + 1);
+            glm::vec3 rr_color = reflect_refract(ray, record, secondary);
             color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
         }
         else {
@@ -118,7 +118,7 @@ glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
     for (Light *light: lights) {
         glm::vec3 l = glm::normalize(light->position - hitRecord.getPoint());
         Ray ray_out(hitRecord.getPoint(), l);
-        HitRecord hit = root->hit(ray_out, 0, std::numeric_limits<float>::max());
+        HitRecord hit = root->hit(ray_out, 1e-3, std::numeric_limits<float>::max());
         if (hit.isHit()) {
             float len_hit = glm::length(hit.getPoint() - hitRecord.getPoint());
             float len_light = glm::length(light->position - hitRecord.getPoint());
