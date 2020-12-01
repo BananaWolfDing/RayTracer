@@ -8,12 +8,20 @@
 #include <glm/glm.hpp>
 
 class Material {
+    bool transparency;
     double shine, refl, refr;
     glm::vec3 kd, ks;
 
 public:
     Material();
-    Material(glm::vec3 kd, glm::vec3 ks, double shine, double refl = 0, double refr = 0);
+    Material(
+            glm::vec3 kd,
+            glm::vec3 ks,
+            double shine,
+            double refl = 0,
+            double refr = 0,
+            bool tran = false);
+
     Material &operator=(const Material &other);
 
     glm::vec3 diffuse() const;
@@ -22,6 +30,7 @@ public:
     double shininess() const;
     double reflect() const;
     double refract() const;
+    bool transparent() const;
 };
 
 

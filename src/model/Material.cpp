@@ -5,8 +5,15 @@
 
 Material::Material() {}
 
-Material::Material(glm::vec3 kd, glm::vec3 ks, double shine, double refl, double refr):
-    kd{kd}, ks{ks}, shine{shine}, refl{refl}, refr{refr} {}
+Material::Material(
+        glm::vec3 kd,
+        glm::vec3 ks,
+        double shine,
+        double refl,
+        double refr,
+        bool tran):
+    kd{kd}, ks{ks}, shine{shine}, refl{refl},
+    refr{refr}, transparency(tran) {}
 
 Material& Material::operator=(const Material &other) {
     if (&other == this) {
@@ -40,4 +47,8 @@ double Material::reflect() const {
 
 double Material::refract() const {
     return refr;
+}
+
+bool Material::transparent() const {
+    return transparency;
 }

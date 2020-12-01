@@ -24,12 +24,13 @@ class Tracer {
 
     const size_t h, w;
     uint32_t num_thread, num_sample;
+    uint32_t secondary_limit;
     std::atomic_uint thread_row;
 
     void Trace_thread();
-    glm::vec3 trace(Ray ray);
+    glm::vec3 trace(Ray ray, uint32_t secondary = 0);
     glm::vec3 diffuse_specular(Ray ray, HitRecord hitRecord);
-    glm::vec3 reflect_refract(Ray ray, HitRecord hitRecord);
+    glm::vec3 reflect_refract(Ray ray, HitRecord hitRecord, uint32_t secondary = 0);
 public:
     Tracer(Scene *scene,
             RGB_Image *img,

@@ -5,7 +5,7 @@
 #include "render/Tracer.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << "Rendering" << std::endl;
 
     RGB_Image img(800, 800);
     Scene scene = Scene();

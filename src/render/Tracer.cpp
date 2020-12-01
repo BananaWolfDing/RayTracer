@@ -35,6 +35,8 @@ Tracer::Tracer(
     else {
         num_sample = 1;
     }
+
+    secondary_limit = 20;
 }
 
 void Tracer::render() {
@@ -90,14 +92,20 @@ void Tracer::Trace_thread() {
     }
 }
 
-glm::vec3 Tracer::trace(Ray ray) {
-    HitRecord record = root->hit(ray, 0, std::numeric_limits<float>::max());
+glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
+    HitRecord record = root->hit(ray, 1e-5, std::numeric_limits<float>::max());
 
     if (record.isHit()) {
         Material mat = record.getMaterial();
         glm::vec3 ds_color = diffuse_specular(ray, record);
-        glm::vec3 rr_color = reflect_refract(ray, record);
-        glm::vec3 color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
+        glm::vec3 color;
+        if (secondary < secondary_limit) {
+            glm::vec3 rr_color = reflect_refract(ray, record, secondary + 1);
+            color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
+        }
+        else {
+            color = ds_color;
+        }
         return color + mat.diffuse() * ambient;
     }
     else {
@@ -143,6 +151,57 @@ glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
     return color;
 }
 
-glm::vec3 Tracer::reflect_refract(Ray ray, HitRecord hitRecord) {
-    return glm::vec3();
+glm::vec3 Tracer::reflect_refract(Ray ray, HitRecord hitRecord, uint32_t secondary) {
+    float refl = hitRecord.getMaterial().reflect();
+    float refr = hitRecord.getMaterial().refract();
+
+    if (refl > 0 || refr > 0) {
+        glm::vec3 refl_color = glm::vec3(), refr_color = glm::vec3();
+
+        glm::vec3 in_dirc = glm::normalize(ray.getDirection());
+        glm::vec3 normal = hitRecord.getNormal();
+        if (glm::dot(in_dirc, normal) > 0) {
+            normal = -normal;
+        }
+
+        if (refr > 0) {
+            if (hitRecord.getMaterial().transparent()) {
+                Ray through_ray(hitRecord.getPoint(), ray.getDirection());
+                refr_color = trace(through_ray, secondary + 1);
+            }
+            else {
+                float ratio;
+                if (glm::dot(in_dirc, hitRecord.getNormal()) < 0) {
+                    ratio = 1 / refl;
+                }
+                else {
+                    ratio = refl;
+                }
+
+                float cosine_in = glm::dot(in_dirc, hitRecord.getNormal());
+                float sine_out2 = (ratio * ratio) * (1 - cosine_in * cosine_in);
+                if (sine_out2 < 1) {
+                    float cosine_out = sqrt(1.0 - sine_out2);
+                    glm::vec3 refract_direction = ratio * in_dirc - ratio * glm::dot(in_dirc, normal) * normal - cosine_out * normal;
+                    Ray refract_ray(hitRecord.getPoint(), refract_direction);
+                    refr_color = trace(refract_ray, secondary + 1);
+                }
+                else {
+                    refl += refr; // total internal reflection
+                }
+            }
+        }
+
+        if (refl > 0) {
+            glm::vec3 reflect_direction = ray.getDirection() -
+                                          2 * glm::dot(ray.getDirection(), normal) * normal;
+            Ray reflect_ray(hitRecord.getPoint(), reflect_direction);
+            refl_color = trace(reflect_ray, secondary + 1);
+        }
+
+        return glm::mix(refl_color, refr_color, refr / (refl + refr));
+    }
+    else {
+        return glm::vec3();
+    }
 }
