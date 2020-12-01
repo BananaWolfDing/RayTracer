@@ -17,6 +17,8 @@ public:
     Scene();
     ~Scene();
     HitRecord hit(Ray ray, float tmin, float tmax);
+
+    BoundingBox const& get_box() const { return box; }
 };
 
 

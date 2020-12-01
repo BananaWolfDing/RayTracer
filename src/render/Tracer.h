@@ -7,9 +7,11 @@
 #include <cstdint>
 #include <list>
 #include <atomic>
+
+#include "../spacetime/Spacetime.h"
 #include "../model/Scene.h"
-#include "../RGB_Image.h"
 #include "../model/Light.h"
+#include "../RGB_Image.h"
 
 
 class Tracer {
@@ -23,9 +25,13 @@ class Tracer {
     const std::list<Light *> lights;
 
     const size_t h, w;
+		Spacetime* spacetime;
+
     uint32_t num_thread, num_sample;
     uint32_t secondary_limit;
     std::atomic_uint thread_row;
+
+    BoundingBox universe_box;
 
     void Trace_thread();
     glm::vec3 trace(Ray ray, uint32_t secondary = 0);
@@ -40,6 +46,7 @@ public:
             glm::vec3 view,
             float fovy,
             std::list<Light *> lights,
+            Spacetime* spacetime,
             bool anti_aliasing = false,
             bool multi_thread = false);
 

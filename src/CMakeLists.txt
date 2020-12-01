@@ -13,6 +13,8 @@ set(SRC_FILES
 	model/BoundingBox.cpp
 	model/Light.cpp
 	model/Object.cpp
+	spacetime/SpacetimeFlat.cpp
+	spacetime/SpacetimeKerr.cpp
 )
 
 add_executable(RayTracer ${SRC_FILES})

@@ -17,7 +17,7 @@ BoundingBox::BoundingBox(float x1, float x2, float y1, float y2, float z1, float
     this->z2 = std::max(z1, z2);
 }
 
-bool BoundingBox::hitBox(Ray ray, float tmin, float tmax) {
+bool BoundingBox::hitBox(Ray ray, float tmin, float tmax) const {
     float rayX = ray.getDirection().x;
     float dx1 = x1 - ray.getOrigin().x;
     float dx2 = x2 - ray.getOrigin().x;
@@ -100,4 +100,22 @@ bool BoundingBox::hitBox(Ray ray, float tmin, float tmax) {
     }
 
     return false;
+}
+
+
+bool BoundingBox::contains(glm::vec3 const& v) const
+{
+	return
+		x1 <= v.x && v.x <= x2 &&
+		y1 <= v.y && v.y <= y2 &&
+		z1 <= v.z && v.z <= z2;
+}
+
+BoundingBox BoundingBox::operator|(glm::vec3 const& v) const
+{
+	return BoundingBox(
+		std::min(x1, v.x), std::max(x2, v.x),
+		std::min(y1, v.y), std::max(y2, v.y),
+		std::min(z1, v.z), std::max(z2, v.z)
+		);
 }

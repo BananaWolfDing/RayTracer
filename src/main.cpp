@@ -4,6 +4,8 @@
 #include "model/Scene.h"
 #include "render/Tracer.h"
 
+#include "spacetime/SpacetimeFlat.h"
+
 int main() {
     std::cout << "Rendering" << std::endl;
 
@@ -15,6 +17,8 @@ int main() {
     std::list<Light *> lights;
     lights.emplace_back(&light);
 
+		SpacetimeFlat spacetime;
+
     Tracer tracer(
             &scene,
             &img,
@@ -23,7 +27,8 @@ int main() {
             glm::vec3(0, 1, 0),
             glm::vec3(0, 0, -1),
             50.0f,
-            lights
+            lights,
+            &spacetime
             );
 
     tracer.render();

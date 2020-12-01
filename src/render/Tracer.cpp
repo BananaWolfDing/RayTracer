@@ -15,12 +15,15 @@ Tracer::Tracer(
         const glm::vec3 view,
         float fovy,
         const std::list<Light *> lights,
+        Spacetime* spacetime,
         bool anti_aliasing,
         bool multi_thread):
 
         root{scene}, img{img}, eye{eye}, ambient{ambient},
         thread_row{0}, up{up}, fovy{fovy}, view{view},
-        lights{lights}, h{img->get_height()}, w{img->get_width()} {
+        lights{lights}, h{img->get_height()}, w{img->get_width()},
+        spacetime{spacetime}, universe_box{scene->get_box() | eye}
+{
 
     if (multi_thread) {
         num_thread = 50;
@@ -92,25 +95,34 @@ void Tracer::Trace_thread() {
     }
 }
 
-glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
-    HitRecord record = root->hit(ray, 1e-5, std::numeric_limits<float>::max());
+glm::vec3 Tracer::trace(Ray ray, uint32_t secondary)
+{
+	float maxTime = std::numeric_limits<float>::max();
 
-    if (record.isHit()) {
-        Material mat = record.getMaterial();
-        glm::vec3 ds_color = diffuse_specular(ray, record);
-        glm::vec3 color;
-        if (secondary < secondary_limit) {
-            glm::vec3 rr_color = reflect_refract(ray, record, secondary + 1);
-            color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
-        }
-        else {
-            color = ds_color;
-        }
-        return color + mat.diffuse() * ambient;
-    }
-    else {
-        return glm::vec3(0.7, 0.7, 0.7);
-    }
+	while (!std::isnan(maxTime) && universe_box.contains(ray.getOrigin()))
+	{
+		HitRecord record = root->hit(ray, 1e-5, maxTime);
+		
+		if (record.isHit()) {
+			Material mat = record.getMaterial();
+			glm::vec3 ds_color = diffuse_specular(ray, record);
+			glm::vec3 color;
+			if (secondary < secondary_limit) {
+				glm::vec3 rr_color = reflect_refract(ray, record, secondary + 1);
+				color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
+			}
+			else {
+				color = ds_color;
+			}
+			return color + mat.diffuse() * ambient;
+		}
+
+		if (std::isinf(maxTime))
+			// Cannot hit anything despite infinite tolerance
+			break;
+		ray = spacetime->geodesic(ray, &maxTime);
+	}
+	return glm::vec3(0.7, 0.7, 0.7);
 }
 
 glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
