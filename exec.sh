@@ -1,6 +1,6 @@
 #!/bin/bash
 
 docker run \
-	-v ${PWD}:/data \
+	-rm -v ${PWD}:/data \
 	--entrypoint build/RayTracer \
 	env_raytracer $@
