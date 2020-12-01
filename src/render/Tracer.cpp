@@ -130,7 +130,7 @@ glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
     for (Light *light: lights) {
         glm::vec3 l = glm::normalize(light->position - hitRecord.getPoint());
         Ray ray_out(hitRecord.getPoint(), l);
-        HitRecord hit = root->hit(ray_out, 0, std::numeric_limits<float>::max());
+        HitRecord hit = root->hit(ray_out, 1e-3, std::numeric_limits<float>::max());
         if (hit.isHit()) {
             float len_hit = glm::length(hit.getPoint() - hitRecord.getPoint());
             float len_light = glm::length(light->position - hitRecord.getPoint());
