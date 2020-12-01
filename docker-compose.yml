@@ -1,0 +1,12 @@
+version: '3'
+services:
+  raytracer:
+    image: env_raytracer
+    hostname: env_raytracer
+    container_name: env_raytracer
+    build:
+      context: ./env
+    volumes:
+      - '.:/data'
+    environment:
+      BUILD_TYPE: Debug
