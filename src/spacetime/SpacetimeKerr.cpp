@@ -121,12 +121,12 @@ Ray SpacetimeKerr::geodesic(Ray const& ray, float* const h)
 
 	glm::vec4 dx(ray.getDirection().length(), ray.getDirection());
 	
-	//glm::vec4 dx2 = dx2ds(glm::vec4(ray.getOrigin(), 0.f),  dx);
+	glm::vec4 dx2 = dx2ds(glm::vec4(ray.getOrigin(), 0.f),  dx);
 
 
 	Ray result(ray.getOrigin() + *h * ray.getDirection(),
-						 ray.getDirection()); // + *h * (glm::vec3) dx2);
-	*h = 1;
+						 ray.getDirection() + *h * (glm::vec3) dx2);
+	*h = 0.01;
 	return result;
 }
 

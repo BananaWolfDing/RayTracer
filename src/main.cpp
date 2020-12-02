@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
 	std::list<Light *> lights;
 	lights.emplace_back(&light);
 	
-	SpacetimeFlat spacetime;
-	//SpacetimeKerr spacetime(0.9, 9., 1.);
+	//SpacetimeFlat spacetime;
+	SpacetimeKerr spacetime(0.5, 0.3, 1.);
 	
 	Tracer tracer(
 	        &scene,

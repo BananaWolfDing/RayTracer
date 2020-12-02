@@ -110,6 +110,14 @@ bool BoundingBox::contains(glm::vec3 const& v) const
 		y1 <= v.y && v.y <= y2 &&
 		z1 <= v.z && v.z <= z2;
 }
+BoundingBox BoundingBox::expand(float size) const
+{
+	return BoundingBox(
+			x1 - size, x2 + size,
+			y1 - size, y2 + size,
+			z1 - size, z2 + size
+		);
+}
 
 BoundingBox BoundingBox::operator|(glm::vec3 const& v) const
 {

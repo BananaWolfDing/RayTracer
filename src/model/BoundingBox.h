@@ -18,6 +18,8 @@ public:
 
     bool contains(glm::vec3 const&) const;
 
+    BoundingBox expand(float size) const;
+
 		/**
 		 * Add a point into the bounding box
 		 */

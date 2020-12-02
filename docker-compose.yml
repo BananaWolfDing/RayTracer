@@ -9,4 +9,4 @@ services:
     volumes:
       - '.:/data'
     environment:
-      BUILD_TYPE: Debug
+      BUILD_TYPE: RelWithDebInfo
