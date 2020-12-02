@@ -134,6 +134,31 @@ namespace
 		glm::mat4x4 result = glm::outerProduct(a, b);
 		return result + glm::transpose(result);
 	}
+
+	/**
+	 * Calculate the contravariant tensor g^{i,j}
+	 */
+	inline glm::mat4x4
+	kerr_schild_contravariant_g(float const f, glm::vec4 const& k)
+	{
+		// Instead of computing the inverse directly we can use Sherman-Morrison
+		// formula. This is because g is the sum of "identity" plus a rank 1
+		// matrix.
+
+
+		// See Visser, The Kerr spacetime: A brief introduction, Equation (45)
+		// The vector k is null w.r.t. both Minkowski and Kerr metrics, so
+		// Sherman-Morrison formula's denominator is equal to 1.
+
+		glm::vec4 const k2(k.x, k.y, k.z, -k.w);
+		glm::mat4 result = -glm::outerProduct(k2, k2);
+		result[0][0] += 1.f;
+		result[1][1] += 1.f;
+		result[2][2] += 1.f;
+		result[3][3] -= 1.f;
+
+		return result;
+	}
 }
 SpacetimeKerr::SpacetimeKerr(float spin, float rs, float c, float epsilon)
 	: spin(spin)
@@ -204,14 +229,19 @@ glm::vec4 SpacetimeKerr::dx2ds(glm::vec4 const& x, glm::vec4 const& dxds) const
 	float const f = kerr_schild_f(x, r, a, /*2GM=*/rs * c * c, drdx, &dfdx);
 
 	glm::mat4x4 const ktk = glm::outerProduct(k, k);
+
+	// The metric tensor is given by g = eta + f*k*k^T
+	
+	/*
 	glm::mat4x4 g = f * ktk;
 	// Add the Minkowski tensor
 	g[0][0] += 1.f;
 	g[1][1] += 1.f;
 	g[2][2] += 1.f;
 	g[3][3] -= 1.f;
+	*/
 
-	glm::mat4x4 gInv = glm::inverse(g);
+	glm::mat4x4 const gInv = kerr_schild_contravariant_g(f, k);
 
 	glm::mat4x4 const dgdx[] = {
 		f * mirror(k, dkd1) + dfdx.x * ktk,
@@ -226,11 +256,14 @@ glm::vec4 SpacetimeKerr::dx2ds(glm::vec4 const& x, glm::vec4 const& dxds) const
 	for (int beta = 0; beta < 4; ++beta)
 	{
 		dx2ds[beta] = 0.f;
+#pragma unroll
 		for (int alpha = 0; alpha < 4; ++alpha)
 		{
+#pragma unroll
 			for (int nu = 0; nu < 4; ++nu)
 			{
 				float christoffel = 0.f;
+#pragma unroll
 				for (int mu = 0; mu < 4; ++mu)
 				{
 					christoffel += gInv[mu][beta] *
