@@ -168,8 +168,8 @@ Ray SpacetimeKerr::geodesic(Ray const& ray, float* const h)
 	glm::vec4 d4(d.x, d.z, d.y, glm::l2Norm(d));
 
 	runge_kutta_fehlberg(
-		[this](glm::vec4 x, glm::vec4 dx){ return this->dx2ds(x, dx); },
-		[](glm::vec4 x){ return vec_max(glm::abs(x)); },
+		[this](glm::vec4 const& x, glm::vec4 const& dx){ return this->dx2ds(x, dx); },
+		[](glm::vec4 const& x){ return vec_max(glm::abs(x)); },
 		epsilon, o4, d4, *h);
 
 	Ray result(glm::vec3(o4.x, o4.z, o4.y),
