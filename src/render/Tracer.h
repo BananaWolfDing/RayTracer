@@ -48,7 +48,7 @@ public:
             std::list<Light *> lights,
             Spacetime* spacetime,
             bool anti_aliasing = false,
-            bool multi_thread = false);
+            int nThreads = 1);
 
     void render();
 };

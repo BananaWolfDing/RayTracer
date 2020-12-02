@@ -7,6 +7,16 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(CMAKE_CXX_STANDARD 17)
 find_package(Threads REQUIRED)
+find_package(Boost COMPONENTS
+	program_options
+	thread
+	timer
+	REQUIRED)
+
+if (${Boost_FOUND})
+	include_directories(${Boost_INCLUDE_DIRS})
+	link_directories(${Boost_LIBRARY_DIR})
+endif()
 
 option(BUILD_STATIC_LIBS "build static glm library" ON)
 

@@ -20,6 +20,7 @@ set(SRC_FILES
 add_executable(RayTracer ${SRC_FILES})
 target_link_libraries(RayTracer
 	${CMAKE_THREAD_LIBS_INIT}
+	${Boost_LIBRARIES}
 	LodePNG
 	)
 

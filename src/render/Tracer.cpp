@@ -17,21 +17,14 @@ Tracer::Tracer(
         const std::list<Light *> lights,
         Spacetime* spacetime,
         bool anti_aliasing,
-        bool multi_thread):
+        int nThreads):
 
         root{scene}, img{img}, eye{eye}, ambient{ambient},
         thread_row{0}, up{up}, fovy{fovy}, view{view},
         lights{lights}, h{img->get_height()}, w{img->get_width()},
-        spacetime{spacetime}, universe_box{scene->get_box() | eye}
+        spacetime{spacetime}, universe_box{scene->get_box() | eye},
+        num_thread(nThreads)
 {
-
-    if (multi_thread) {
-        num_thread = 50;
-    }
-    else {
-        num_thread = 1;
-    }
-
     if (anti_aliasing) {
         num_sample = 10;
     }
@@ -69,6 +62,7 @@ void Tracer::Trace_thread() {
         glm::vec3 base = dist * front + ((float) h / 2 - row) * above;
         for (uint32_t col = 0; col < w; col++) {
             glm::vec3 direction = base + ((float) w / 2 - col) * right;
+						direction = glm::normalize(direction);
 
             if (num_sample == 1) {
                 Ray ray(eye, direction);
@@ -97,11 +91,15 @@ void Tracer::Trace_thread() {
 
 glm::vec3 Tracer::trace(Ray ray, uint32_t secondary)
 {
-	float maxTime = std::numeric_limits<float>::max();
+	int steps = 0;
+	float maxTime = 0.1;
+	//float maxTime = std::numeric_limits<float>::max();
 
-	while (!std::isnan(maxTime) && universe_box.contains(ray.getOrigin()))
+	while (!std::isnan(maxTime) &&
+			universe_box.contains(ray.getOrigin()))
 	{
 		HitRecord record = root->hit(ray, 1e-5, maxTime);
+		++steps;
 		
 		if (record.isHit()) {
 			Material mat = record.getMaterial();
