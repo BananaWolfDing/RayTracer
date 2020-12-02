@@ -22,7 +22,7 @@ Tracer::Tracer(
         root{scene}, img{img}, eye{eye}, ambient{ambient},
         thread_row{0}, up{up}, fovy{fovy}, view{view},
         lights{lights}, h{img->get_height()}, w{img->get_width()},
-        spacetime{spacetime}, universe_box{(scene->get_box() | eye).expand(10.f)},
+        spacetime{spacetime}, universe_box{(scene->get_box() | eye).expand(100.f)},
         num_thread(nThreads)
 {
     if (anti_aliasing) {
@@ -96,7 +96,7 @@ glm::vec3 Tracer::trace(Ray ray, uint32_t secondary)
 
 	while (!std::isnan(maxTime)
 		&& universe_box.contains(ray.getOrigin())
-		&& steps < 10000
+		&& steps < 1000
 		)
 	{
 		HitRecord record = root->hit(ray, 1e-5, maxTime);

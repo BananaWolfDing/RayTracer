@@ -1,6 +1,5 @@
 
 set(SRC_FILES
-	main.cpp
 	RGB_Image.cpp
 	render/Ray.cpp
 	model/Material.cpp
@@ -17,11 +16,16 @@ set(SRC_FILES
 	spacetime/SpacetimeKerr.cpp
 )
 
-add_executable(RayTracer ${SRC_FILES})
+add_executable(RayTracer main.cpp ${SRC_FILES})
 target_link_libraries(RayTracer
 	${CMAKE_THREAD_LIBS_INIT}
 	${Boost_LIBRARIES}
 	LodePNG
 	)
 
-
+add_executable(Geodesic test/Geodesic.cpp ${SRC_FILES})
+target_link_libraries(Geodesic
+	${CMAKE_THREAD_LIBS_INIT}
+	${Boost_LIBRARIES}
+	LodePNG
+	)

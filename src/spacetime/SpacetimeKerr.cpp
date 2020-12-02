@@ -2,6 +2,9 @@
 
 #include <cassert>
 #include <boost/math/tools/roots.hpp>
+#include <glm/gtx/norm.hpp>
+
+#include "../util/de.h"
 
 namespace
 {
@@ -9,6 +12,11 @@ namespace
 	norm_squared(glm::vec3 const& x)
 	{
 		return glm::dot(x, x);
+	}
+	inline float
+	vec_max(glm::vec4 const& x)
+	{
+		return std::max(x.w, std::max(std::max(x.x, x.y), x.z));
 	}
 
 	inline float
@@ -20,10 +28,10 @@ namespace
 		float const nominal_r = top1+top2;
 		auto target = [&](float r) {
 			float const r2 = r*r;
-			return top1 / (r2 + a*a) + top2 / r2 - 1;
+			return top1 / (r2 + a*a) + top2 / r2 - 1.f;
 		};
-		auto tol = [&](float min, float max) { return true; };
-		auto result = boost::math::tools::bisect(target, horizon, nominal_r, tol);
+		auto tol = [&](float min, float max) { return std::abs(max - min) < 1e-5; };
+		auto result = boost::math::tools::bisect(target, /*horizon*/ 1e-5f, nominal_r+1e-5f, tol);
 		return 0.5f * (result.first + result.second);
 	}
 
@@ -35,8 +43,11 @@ namespace
 		float const r2a2 = r2 + a*a;
 
 		// Use Implicit Function Theorem to compute derivative of r w.r.t. x
+
+
+		// Jacobian of definition of r in Kerr-Schild coordinates w.r.t r
 		float const jfr = -(x.x*x.x + x.y*x.y) / (r2a2 * r2a2) * 2 * r
-			- x.z*x.z / (r2 * r);
+			- 2 * x.z*x.z / (r2 * r);
 
 		return -jfr * glm::vec3(
 					2 * x.x / r2a2,
@@ -54,10 +65,11 @@ namespace
 		float const a2 = a*a;
 		float const r2a2 = r2+a2;
 		float const r2a22 = r2a2 * r2a2;
+		float const r_r2a2 = r/r2a2;
 		// Partial derivative dk/dr
 		glm::vec3 const pdkdr = glm::vec3(
-				( (a2-r2)*x.x - 2*a*r*x.y ) / r2a22,
-				( (a2-r2)*x.y + 2*a*r*x.x ) / r2a22,
+				( x.x - 2*a*r_r2a2*x.y ) / r2a2,
+				( x.y + 2*a*r_r2a2*x.x ) / r2a2,
 				-x.z/r2
 			);
 
@@ -83,11 +95,37 @@ namespace
 		*dkdz = glm::vec4(pdkdr * drdx.z + pdkdz, 0.f);
 
 		return {
-			1.f,
 			(r * x.x + a * x.y) / r2a2,
 			(r * x.y - a * x.x) / r2a2,
-			x.z / r
+			x.z / r,
+			1.f
 		};
+	}
+
+	inline float
+	kerr_schild_f(glm::vec4 const& x,
+	              float const r, float const a, float const gm2,
+								glm::vec3 const& drdx,
+	              glm::vec3* const dfdx)
+	{
+		float const r2 = r * r;
+		float const r3 = r2 * r;
+		float const r4 = r3 * r;
+		float const a2 = a * a;
+		float const z2 = x.z * x.z;
+		float const denom = r4 + a2 * z2;
+		float const f = gm2 * r3 / denom;
+
+		float const pdfdr = -gm2 * (r4 - 3 * a2 * z2) / (denom / r2 * denom);
+		float const pdfdz = -gm2 * 2 * a2 * x.z / (a2 * a2 * z2 * z2 / r3
+			+ r * (r4 + 2 * a2 * z2));
+		*dfdx = glm::vec3(
+			pdfdr * drdx.x,
+			pdfdr * drdx.y,
+			pdfdr * drdx.z + pdfdz
+		);
+
+		return f;
 	}
 
 	inline glm::mat4x4
@@ -97,12 +135,12 @@ namespace
 		return result + glm::transpose(result);
 	}
 }
-SpacetimeKerr::SpacetimeKerr(float spin, float rs, float c)
+SpacetimeKerr::SpacetimeKerr(float spin, float rs, float c, float epsilon)
 	: spin(spin)
 	, rs(rs)
 	, c(c)
+	, epsilon(epsilon)
 {
-	assert(0 <= spin);
 	assert(0 < c);
 	assert(0 <= rs);
 
@@ -119,15 +157,33 @@ Ray SpacetimeKerr::geodesic(Ray const& ray, float* const h)
 	 * ray.
 	 */
 
-	glm::vec4 dx(ray.getDirection().length(), ray.getDirection());
-	
-	glm::vec4 dx2 = dx2ds(glm::vec4(ray.getOrigin(), 0.f),  dx);
+	glm::vec3 const o = ray.getOrigin();
+	glm::vec3 const d = ray.getDirection();
 
+#if 1
+	// Switch the order of z and y axes
+	glm::vec4 o4(o.x, o.z, o.y, 0.f);
+	// The direction must be light-like, so the spacetime interval ds = 0
+	// Under the Minkowski metric, this vector has length 0.
+	glm::vec4 d4(d.x, d.z, d.y, glm::l2Norm(d));
 
-	Ray result(ray.getOrigin() + *h * ray.getDirection(),
-						 ray.getDirection() + *h * (glm::vec3) dx2);
-	*h = 0.01;
+	runge_kutta_fehlberg(
+		[this](glm::vec4 x, glm::vec4 dx){ return this->dx2ds(x, dx); },
+		[](glm::vec4 x){ return vec_max(glm::abs(x)); },
+		epsilon, o4, d4, *h);
+
+	Ray result(glm::vec3(o4.x, o4.z, o4.y),
+						 glm::vec3(d4.x, d4.z, d4.y));
 	return result;
+#else
+	glm::vec4 dx(d.x, d.z, d.y, glm::l2Norm(d));
+	glm::vec4 dx2 = dx2ds(glm::vec4(o.x, o.z, o.y, 0.f),  dx);
+	glm::vec3 dx2_3(dx2.x, dx2.z, dx2.y);
+	
+
+	Ray result(o + *h * d, d + *h * dx2_3);
+	return result;
+#endif
 }
 
 
@@ -142,24 +198,25 @@ glm::vec4 SpacetimeKerr::dx2ds(glm::vec4 const& x, glm::vec4 const& dxds) const
 	glm::vec3 const drdx = kerr_schild_drdx(x, r, a);
 
 	glm::vec4 dkd1, dkd2, dkd3;
-	glm::vec4 k = kerr_schild_k(x, r, a, drdx, &dkd1, &dkd2, &dkd3);
+	glm::vec4 const k = kerr_schild_k(x, r, a, drdx, &dkd1, &dkd2, &dkd3);
 
-	float const f = rs * c * c;
-	
+	glm::vec3 dfdx;
+	float const f = kerr_schild_f(x, r, a, /*2GM=*/rs * c * c, drdx, &dfdx);
 
-	glm::mat4x4 g = f * glm::outerProduct(k, k);
-	g[0][0] -= 1.f;
+	glm::mat4x4 const ktk = glm::outerProduct(k, k);
+	glm::mat4x4 g = f * ktk;
+	// Add the Minkowski tensor
+	g[0][0] += 1.f;
 	g[1][1] += 1.f;
 	g[2][2] += 1.f;
-	g[3][3] += 1.f;
+	g[3][3] -= 1.f;
 
 	glm::mat4x4 gInv = glm::inverse(g);
 
-
 	glm::mat4x4 const dgdx[] = {
-		f * mirror(k, dkd1),
-		f * mirror(k, dkd2),
-		f * mirror(k, dkd3),
+		f * mirror(k, dkd1) + dfdx.x * ktk,
+		f * mirror(k, dkd2) + dfdx.y * ktk,
+		f * mirror(k, dkd3) + dfdx.z * ktk,
 		glm::mat4x4(), // the metric is static w.r.t. time
 	};
 

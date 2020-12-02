@@ -8,7 +8,7 @@
 class SpacetimeKerr final: public Spacetime
 {
 public:
-	SpacetimeKerr(float spin, float rs, float c);
+	SpacetimeKerr(float spin, float rs, float c, float epsilon=5e-2);
 
 	virtual Ray
 	geodesic(Ray const& ray, float* const maxTime) override;
@@ -40,6 +40,8 @@ private:
 	 * represents a extremal black hole.
 	 */
 	float horizon;
+
+	float epsilon;
 };
 
 #endif // !SPACETIME_SPACETIMEKERR_H

@@ -34,15 +34,15 @@ int main(int argc, char* argv[])
 	lights.emplace_back(&light);
 	
 	//SpacetimeFlat spacetime;
-	SpacetimeKerr spacetime(0.5, 0.3, 1.);
+	SpacetimeKerr spacetime(.9f, .8f, 10.f);
 	
 	Tracer tracer(
 	        &scene,
 	        &img,
-	        glm::vec3(0, 0, 100),
+	        glm::vec3(0, 100, 100),
 	        glm::vec3(0, 0, 0),
 	        glm::vec3(0, 1, 0),
-	        glm::vec3(0, 0, -1),
+	        glm::vec3(0, -.707, -.707),
 	        50.0f,
 	        lights,
 	        &spacetime,
