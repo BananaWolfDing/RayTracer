@@ -13,11 +13,13 @@ set(SRC_FILES
 	model/BoundingBox.cpp
 	model/Light.cpp
 	model/Object.cpp
+	model/Modeling.cpp
 )
 
 add_executable(RayTracer ${SRC_FILES})
 target_link_libraries(RayTracer
 	${CMAKE_THREAD_LIBS_INIT}
+	yaml-cpp
 	LodePNG
 	)
 
