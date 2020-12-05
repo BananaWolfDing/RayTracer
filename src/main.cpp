@@ -9,7 +9,7 @@
 int main() {
     std::cout << "Rendering!" << std::endl;
 
-    Model test_model("models/test.yml");
+    Model test_model("examples/test.yml");
     Scene *s = test_model.getScene();
     test_model.getLights();
     test_model.getObserver();
