@@ -51,6 +51,7 @@ Cube::Cube(glm::vec3 p, float e): pos{p}, edge{e} {
         glm::vec3 p3 = vertices[triangles[i * 3 + 2]];
 
         tri[i] = Triangle(p1, p2, p3);
+        tri[i].setMaterial(mat);
     }
 }
 

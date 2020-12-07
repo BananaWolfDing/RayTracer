@@ -10,6 +10,7 @@ set(SRC_FILES
 	model/Scene.cpp
 	model/Sphere.cpp
 	model/Triangle.cpp
+	model/bump/BumpMapping.cpp
 	render/HitRecord.cpp
 	render/Ray.cpp
 	render/Tracer.cpp

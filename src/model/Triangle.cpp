@@ -60,6 +60,7 @@ HitRecord Triangle::hit(Ray ray, float tmin, float tmax) {
                 t,
                 ray.at(t),
                 glm::cross(V1, V2),
+                (*bump_mapping)(ray.at(t)),
                 this->mat
                 );
 }

@@ -83,6 +83,7 @@ HitRecord Sphere::hit(Ray ray, float tmin, float tmax) {
                         sol.smaller,
                         ray.at(sol.smaller),
                         ray.at(sol.smaller) - pos,
+                        (*bump_mapping)(ray.at(sol.smaller)),
                         this->mat
                         );
             }
@@ -95,6 +96,7 @@ HitRecord Sphere::hit(Ray ray, float tmin, float tmax) {
                         sol.smaller,
                         ray.at(sol.smaller),
                         ray.at(sol.smaller) - pos,
+                        (*bump_mapping)(ray.at(sol.smaller)),
                         this->mat
                         );
             }
@@ -103,6 +105,7 @@ HitRecord Sphere::hit(Ray ray, float tmin, float tmax) {
                         sol.greater,
                         ray.at(sol.greater),
                         ray.at(sol.greater) - pos,
+                        (*bump_mapping)(ray.at(sol.greater)),
                         this->mat
                         );
             }
