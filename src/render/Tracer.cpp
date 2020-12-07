@@ -122,16 +122,17 @@ void Tracer::Trace_thread() {
 
 bool Tracer::rayHit(Ray ray, HitRecord* const record)
 {
-	int steps = spacetime->getMaxSteps();
+	int const maxSteps = spacetime->getMaxSteps();
 	float maxTime = spacetime->getInitialStepSize();
+	int steps = 0;
 
 	while (!std::isnan(maxTime)
 		&& root->get_box().contains(ray.getOrigin())
-		&& steps > 0
+		&& steps < maxSteps
 		)
 	{
-    *record = root->hit(ray, 1e-3, maxTime);
-    --steps;
+    *record = root->hit(ray, steps == 0 ? 1e-3f : 0.f, maxTime);
+    ++steps;
 
     if (record->isHit())
     	return true;
