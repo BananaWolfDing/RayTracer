@@ -1,0 +1,30 @@
+objects:
+  simple:
+    type: cube
+    position: [0, 0, 0]
+    size: 5
+    material:
+      diffuse: [0, 0.467, 0.9]
+      specular: [0.8, 0.8, 0.8]
+      shininess: 0
+      reflection: 0
+      refraction: 0
+      transparent: false
+
+lights:
+  light1:
+    position: [100, 100, 60]
+    color: [1, 1, 1]
+    falloff: [1, 0, 0]
+
+observer:
+  eye: [0, 0, 100]
+  ambient: [0, 0, 0]
+  up: [0, 1, 0]
+  view: [0, 0, -1]
+  fovy: 50
+
+space:
+  x: [-200, 200]
+  y: [-200, 200]
+  z: [-200, 200]

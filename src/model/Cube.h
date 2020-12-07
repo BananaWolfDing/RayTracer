@@ -16,6 +16,7 @@ class Cube: public Object {
 public:
     Cube(glm::vec3 p, float e);
     HitRecord hit(Ray ray, float tmin, float tmax) override;
+    bool intersectBox(BoundingBox box) override;
 };
 
 

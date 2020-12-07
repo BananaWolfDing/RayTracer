@@ -21,6 +21,16 @@ struct ModelingException : public std::exception {
 
 struct Observer {
   glm::vec3 eye, ambient, up, view;
+  float fovy;
+
+  Observer(
+    glm::vec3 eye,
+    glm::vec3 ambient,
+    glm::vec3 up,
+    glm::vec3 view,
+    float fovy):
+
+    eye{eye}, ambient{ambient}, up{up}, view{view}, fovy{fovy} {}
 };
 
 class Model {
@@ -28,7 +38,7 @@ class Model {
 public:
   Model(const std::string &filename);
 
-  Scene *getScene() const;
+  Scene *getScene(std::vector<Object *> &objList) const;
   std::list<Light *> getLights() const;
   Observer getObserver() const;
 };

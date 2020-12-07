@@ -101,3 +101,10 @@ bool BoundingBox::hitBox(Ray ray, float tmin, float tmax) {
 
     return false;
 }
+
+bool BoundingBox::within(glm::vec3 point) {
+    return
+        x1 <= point.x && point.x <= x2 &&
+        y1 <= point.y && point.y <= y2 &&
+        z1 <= point.z && point.z <= z2;
+}

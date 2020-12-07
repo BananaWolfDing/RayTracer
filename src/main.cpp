@@ -10,30 +10,36 @@ int main() {
     std::cout << "Rendering!" << std::endl;
 
     Model test_model("examples/test.yml");
-    Scene *s = test_model.getScene();
-    test_model.getLights();
-    test_model.getObserver();
+
+    std::vector<Object *> items;
+    Scene *s = test_model.getScene(items);
+
+    std::list<Light *> lights = test_model.getLights();
+    Observer ob = test_model.getObserver();
+
+    RGB_Image img(800, 800);
+
+    std::cout << "Model loaded!" << std::endl;
+    Tracer tracer(
+            s,
+            &img,
+            ob.eye,
+            ob.ambient,
+            ob.up,
+            ob.view,
+            ob.fovy,
+            lights
+            );
+
+    tracer.render();
+    img.export_image("test.png");
+
+    for (Object *obj : items) {
+        delete obj;
+    }
+    for (Light *light : lights) {
+        delete light;
+    }
     delete s;
-    // RGB_Image img(800, 800);
-    // Scene scene = Scene();
-
-    // float fall[3] = {1, 0, 0};
-    // Light light(glm::vec3(0.8, 0.8, 0.8), glm::vec3(100, 100, 100), fall);
-    // std::list<Light *> lights;
-    // lights.emplace_back(&light);
-
-    // Tracer tracer(
-    //         &scene,
-    //         &img,
-    //         glm::vec3(0, 0, 100),
-    //         glm::vec3(0, 0, 0),
-    //         glm::vec3(0, 1, 0),
-    //         glm::vec3(0, 0, -1),
-    //         50.0f,
-    //         lights
-    //         );
-
-    // tracer.render();
-    // img.export_image("test.png");
     return 0;
 }

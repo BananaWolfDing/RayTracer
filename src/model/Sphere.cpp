@@ -3,6 +3,7 @@
   */
 #include "Sphere.h"
 #include <cmath>
+#include <iostream>
 
 
 struct quadraticSolution {
@@ -111,4 +112,25 @@ HitRecord Sphere::hit(Ray ray, float tmin, float tmax) {
         default:
             return HitRecord();
     }
+}
+
+bool Sphere::intersectBox(BoundingBox box) {
+    float x1 = pos.x - radius;
+    float x2 = pos.x + radius;
+    float y1 = pos.y - radius;
+    float y2 = pos.y + radius;
+    float z1 = pos.z - radius;
+    float z2 = pos.z + radius;
+
+    if (x1 > box.x2 || x2 < box.x1) {
+        return false;
+    }
+    if (y1 > box.y2 || y2 < box.y1) {
+        return false;
+    }
+    if (z1 > box.z2 || x2 < box.z1) {
+        return false;
+    }
+
+    return true;
 }

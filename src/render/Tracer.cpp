@@ -4,7 +4,29 @@
 #include <thread>
 #include <random>
 #include <algorithm>
+#include <cstdio>
+#include <iostream>
 #include "Tracer.h"
+
+void progress_bar(float ratio) {
+    uint8_t len = 60, end = int(len * ratio);
+
+    std::cout << "[";
+    for (uint8_t i = 0; i < len; i++) {
+        if (i < end) {
+            std::cout << "=";
+        }
+        else if (i == end) {
+            std::cout << ">";
+        }
+        else {
+            std::cout << " ";
+        }
+    }
+
+    std::cout << "] " << int(ratio * 100) << " %\r";
+    std::cout.flush();
+}
 
 Tracer::Tracer(
         Scene *const scene,
@@ -54,8 +76,12 @@ void Tracer::render() {
 
 void Tracer::Trace_thread() {
     while (true) {
+        progress_bar((float) thread_row / h);
         uint32_t row = thread_row++;
         if (row >= h) {
+            if (row == h) {
+                std::cout << std::endl;
+            }
             return;
         }
 
@@ -93,7 +119,7 @@ void Tracer::Trace_thread() {
 }
 
 glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
-    HitRecord record = root->hit(ray, 0, std::numeric_limits<float>::max());
+    HitRecord record = root->hit(ray, 1e-3, std::numeric_limits<float>::max());
 
     if (record.isHit()) {
         Material mat = record.getMaterial();
@@ -182,7 +208,10 @@ glm::vec3 Tracer::reflect_refract(Ray ray, HitRecord hitRecord, uint32_t seconda
                 float sine_out2 = (ratio * ratio) * (1 - cosine_in * cosine_in);
                 if (sine_out2 < 1) {
                     float cosine_out = sqrt(1.0 - sine_out2);
-                    glm::vec3 refract_direction = ratio * in_dirc - ratio * glm::dot(in_dirc, normal) * normal - cosine_out * normal;
+                    glm::vec3 refract_direction =
+                        ratio * in_dirc
+                        - ratio * glm::dot(in_dirc, normal) * normal
+                        - cosine_out * normal;
                     Ray refract_ray(hitRecord.getPoint(), refract_direction);
                     refr_color = trace(refract_ray, secondary + 1);
                 }
