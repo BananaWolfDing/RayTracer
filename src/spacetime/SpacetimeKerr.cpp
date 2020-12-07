@@ -68,7 +68,7 @@ namespace
 		return -glm::vec3(
 					2 * x.x / r2a2_r,
 					2 * x.y / r2a2_r,
-					2 * x.z
+					2 * x.z / r
 				) / jfr_r;
 	}
 

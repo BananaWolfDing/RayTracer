@@ -11,8 +11,8 @@ FILENAME_CSV = "geodesics.csv"
 FILENAME_PNG = "geodesics.png"
 
 px = N.zeros((15,3))
-px[:,0] = N.linspace(-30,30,15)
-px[:,1] = 0
+px[:,0] = 0
+px[:,1] = N.linspace(-50,50,15)
 px[:,2] = 50
 nSteps = 5000
 
@@ -21,11 +21,11 @@ fCsv = open(FILENAME_CSV, "w")
 command = [
     "./test.sh",
     "Geodesic",
-    "--spin", ".01",
-    "--radius", ".01",
-    "--c", "4",
+    "--spin", ".8",
+    "--radius", ".4",
+    "--c", "2",
     "--steps", str(nSteps),
-    "--boundary", "1000",
+    "--boundary", "100",
     "--stepsize", ".1",
     "--solver", "euler",
 ]
@@ -48,9 +48,10 @@ print(df.columns)
 print(f"Range: {df['x'].min()}, {df['x'].max()}, {df['z'].min()}, {df['z'].max()}")
 
 fig, ax = pyplot.subplots(2, 2, figsize=(24, 18))
-seaborn.scatterplot(x="x", y="z", hue="i", data=df, legend='full', ax=ax[0][0])
-seaborn.lineplot(x="step", y="h", hue="i", data=df, legend='full', ax=ax[0][1])
+seaborn.scatterplot(x="x", y="z", hue="i", data=df, legend='full', ax=ax[0][0], linewidth=0)
+seaborn.scatterplot(x="y", y="z", hue="i", data=df, legend='full', ax=ax[0][1], linewidth=0)
 seaborn.lineplot(x="step", y="z", hue="i", data=df, legend='full', ax=ax[1][0])
+seaborn.lineplot(x="step", y="h", hue="i", data=df, legend='full', ax=ax[1][1])
 fig.savefig(FILENAME_PNG, dpi=300)
 
 
