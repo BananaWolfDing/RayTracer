@@ -1,11 +1,11 @@
 spacetime:
   type: kerr
   spin: 0.8
-  radius: 4
-  c: 2
+  radius: 6
+  c: 0.5
   stepsize: 0.1
-  solver: euler
-  maxsteps: 2000
+  solver: rk4
+  maxsteps: 10000
   position: [100, 100, 10]
 
 objects:
