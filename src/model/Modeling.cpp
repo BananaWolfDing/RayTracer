@@ -232,8 +232,8 @@ Spacetime* Model::getSpacetime() const
 		int const maxSteps = obj["maxsteps"] ? obj["maxsteps"].as<int>() : 1000;
 		float const stepsize = obj["stepsize"] ? obj["stepsize"].as<float>() : 1e-1f;
 
-		float const mass = radius * c * c / (2 * 6.674e-11f);
-		std::cout << "Black hole mass: " << mass << "kg\n";
+		float const mass = radius * c * c / (2 * /*G=*/6.674e-11f);
+		std::cout << "Black hole mass: " << mass << " kg\n";
 
 		if (radius == 0.f)
 			return new SpacetimeFlat;

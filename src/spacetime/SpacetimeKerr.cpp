@@ -242,7 +242,7 @@ Ray SpacetimeKerr::geodesic(Ray const& ray, float* const h)
 	{
 		glm::vec4 const a4 = dx2ds(o4, d4);
 		o4 += d4 * *h;
-		//d4 += a4 * *h;
+		d4 += a4 * *h;
 	}
 	else
 	{

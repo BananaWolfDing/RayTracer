@@ -1,11 +1,11 @@
 spacetime:
   type: kerr
-  spin: 0.01
-  radius: 0.01
-  c: 4
-  stepsize: 1
+  spin: 0.1
+  radius: 1
+  c: 2
+  stepsize: 0.1
+  solver: rk4
   maxsteps: 5000
-  solver: euler
   position: [0, 18, 0]
 
 objects:
@@ -14,36 +14,38 @@ objects:
     position: [0, 18, 0]
     radius: 10.0
     material:
-      diffuse: [0, 0, 0]
-      specular: [0, 0, 0]
-      shininess: 0
-      reflection: 0
-      refraction: 0
-      transparent: false
-  floor1:
-    type: triangle
-    p1: [500, 0, -500]
-    p2: [500, 0, 500]
-    p3: [-500, 0, -500]
-    material:
-      diffuse: [0.66, 0.23, 0.81]
+      diffuse: [0.66, 0.66, 0.81]
       specular: [0.2, 0.14, 0.17]
+        #diffuse: [0, 0, 0]
+        #specular: [0, 0, 0]
       shininess: 0
       reflection: 0
       refraction: 0
       transparent: false
-  floor2:
-    type: triangle
-    p1: [-500, 0, 500]
-    p2: [500, 0, 500]
-    p3: [-500, 0, -500]
-    material:
-      diffuse: [0.66, 0.23, 0.81]
-      specular: [0.2, 0.14, 0.17]
-      shininess: 0
-      reflection: 0
-      refraction: 0
-      transparent: false
+        #floor1:
+        #  type: triangle
+        #  p1: [500, 0, -500]
+        #  p2: [500, 0, 500]
+        #  p3: [-500, 0, -500]
+        #  material:
+        #    diffuse: [0.66, 0.23, 0.81]
+        #    specular: [0.2, 0.14, 0.17]
+        #    shininess: 0
+        #    reflection: 0
+        #    refraction: 0
+        #    transparent: false
+        #floor2:
+        #  type: triangle
+        #  p1: [-500, 0, 500]
+        #  p2: [500, 0, 500]
+        #  p3: [-500, 0, -500]
+        #  material:
+        #    diffuse: [0.66, 0.23, 0.81]
+        #    specular: [0.2, 0.14, 0.17]
+        #    shininess: 0
+        #    reflection: 0
+        #    refraction: 0
+        #    transparent: false
   pillar:
     type: cube
     position: [-4, 0, -4]
@@ -88,7 +90,7 @@ objects:
       reflection: 0.2
       refraction: 0.7
       transparent: true
-  ball_2:
+  ball_2b:
     type: sphere
     position: [7, 18, -7]
     radius: 4.5

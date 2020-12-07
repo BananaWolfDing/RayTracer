@@ -124,6 +124,7 @@ bool Tracer::rayHit(Ray ray, HitRecord* const record)
 {
 	int const maxSteps = spacetime->getMaxSteps();
 	float maxTime = spacetime->getInitialStepSize();
+	float const infty = std::numeric_limits<float>::infinity();
 	int steps = 0;
 
 	while (!std::isnan(maxTime)
@@ -131,16 +132,18 @@ bool Tracer::rayHit(Ray ray, HitRecord* const record)
 		&& steps < maxSteps
 		)
 	{
-    *record = root->hit(ray, steps == 0 ? 1e-3f : 0.f, maxTime);
+		// For some reason the max time here must be set to infinity.
+    *record = root->hit(ray, steps == 0 ? 1e-3f : 0.f, infty);
     ++steps;
 
-    if (record->isHit())
+    if (record->isHit() && record->getTime() <= maxTime)
     	return true;
 
 		if (std::isinf(maxTime))
 			// Cannot hit anything despite infinite tolerance
 			break;
 		ray = spacetime->geodesic(ray, &maxTime);
+		//maxTime = 1.0f;
   }
   return false;
 }
@@ -148,7 +151,7 @@ glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
 	HitRecord record;
 	if (!rayHit(ray, &record))
 	{
-		return glm::vec3(0.7, 0.7, 0.7);
+		return glm::vec3(0.5f, 0.5f, 0.5f);
 	}
   Material mat = record.getMaterial();
   glm::vec3 ds_color = diffuse_specular(ray, record);
