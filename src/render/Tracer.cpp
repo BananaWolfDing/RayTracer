@@ -65,6 +65,13 @@ void Tracer::render() {
         threads.emplace_back(std::thread(&Tracer::Trace_thread, this));
     }
 
+    while (thread_row <= h)
+    {
+			std::unique_lock<std::mutex> lock(progress_lock);
+    	progress_cv.wait(lock);
+    	progress_bar(progress);
+    }
+
     for (auto &th: threads) {
         th.join();
     }
@@ -72,7 +79,8 @@ void Tracer::render() {
 
 void Tracer::Trace_thread() {
     while (true) {
-        progress_bar((float) thread_row / h);
+        progress = (float) thread_row / h;
+        progress_cv.notify_all();
         uint32_t row = thread_row++;
         if (row >= h) {
             if (row == h) {

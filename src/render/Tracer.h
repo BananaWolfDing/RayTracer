@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <list>
 #include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 #include "../spacetime/Spacetime.h"
 #include "../model/Scene.h"
@@ -32,6 +34,10 @@ class Tracer {
     std::atomic_uint thread_row;
 
     BoundingBox universe_box;
+
+		std::atomic<float> progress;
+		std::mutex progress_lock;
+		std::condition_variable progress_cv;
 
     void Trace_thread();
     glm::vec3 trace(Ray ray, uint32_t secondary = 0);

@@ -26,7 +26,7 @@
 #define B63 (13/16.f)
 
 #define B54 (16/15.f)
-#define B64 (13/16.f)
+#define B64 (4/27.f)
 
 #define B65 (5/144.f)
 
@@ -60,7 +60,7 @@ runge_kutta_fehlberg(F f, Norm norm, float const epsilon, V& x, V& dx, float& h)
 	x += dx * h;
 	dx = dx_next;
 	h *= 0.9f * std::pow(epsilon / trunc, 0.2f);
-	h = std::max(std::min(h, 1000.f), 1e-2f);
+	h = std::max(std::min(h, 1e3f), 1e-3f);
 #else
 	h *= 0.9f * std::pow(epsilon / trunc, 0.2f);
 	dx = dx_next;

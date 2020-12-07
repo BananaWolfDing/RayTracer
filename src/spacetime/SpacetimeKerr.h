@@ -8,7 +8,7 @@
 class SpacetimeKerr final: public Spacetime
 {
 public:
-	SpacetimeKerr(float spin, float rs, float c, float epsilon=5e-2);
+	SpacetimeKerr(glm::vec3 position, float spin, float rs, float c, float epsilon=5e-2);
 
 	virtual Ray
 	geodesic(Ray const& ray, float* const maxTime) override;
@@ -20,6 +20,7 @@ public:
 	float kerr_a() const { return spin * rs / (2 * c * c); }
 
 private:
+	glm::vec3 position;
 	/**
 	 * Spin parameter, given by spin = c*J/GM^2
 	 */

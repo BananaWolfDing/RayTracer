@@ -35,3 +35,4 @@ target_link_libraries(Geodesic
 	${CMAKE_THREAD_LIBS_INIT}
 	${Boost_LIBRARIES}
 	)
+target_compile_definitions(Geodesic PUBLIC DEBUG_GEODESIC)

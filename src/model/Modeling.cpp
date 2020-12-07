@@ -221,8 +221,15 @@ Spacetime* Model::getSpacetime() const
 		float const radius = obj["radius"] ? obj["radius"].as<float>() : 0.1f;
 		float const c = obj["c"] ? obj["c"].as<float>() : 100.f;
 		float const tolerance = obj["tolerance"] ? obj["tolerance"].as<float>() : 5e-2;
+		glm::vec3 const position = obj["position"]
+			? glm::vec3(
+					obj["position"][0].as<float>(),
+					obj["position"][1].as<float>(),
+					obj["position"][2].as<float>()
+				)
+			: glm::vec3();
 
-		return new SpacetimeKerr(spin, radius, c, tolerance);
+		return new SpacetimeKerr(position,spin, radius, c, tolerance);
 	}
 
   throw ModelingException("Unknown spacetime type");
