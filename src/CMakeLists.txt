@@ -14,6 +14,7 @@ set(SRC_FILES
 	model/Light.cpp
 	model/Object.cpp
 	model/Modeling.cpp
+	model/bump/BumpMapping.cpp
 )
 
 add_executable(RayTracer ${SRC_FILES})

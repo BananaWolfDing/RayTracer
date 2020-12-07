@@ -102,6 +102,23 @@ Scene *Model::getScene(std::vector<Object *> &itemsList) const {
         throw ModelingException("Unrecognized type for object.");
       }
 
+      try {
+        if (obj.second["mapping"]) {
+          if (obj.second["mapping"].as<std::string>() == "floor") {
+            item->setMapping(&floor_mapping);
+          }
+          else if (obj.second["mapping"].as<std::string>() == "plain") {
+            item->setMapping(&plain_mapping);
+          }
+          else {
+            throw ModelingException("Unrecognized bump mapping.");
+          }
+        }
+      }
+      catch (std::exception e) {
+        throw ModelingException("Bump Mapping Error.");
+      }
+
       item->setMaterial(material);
       objectList.push_back(item);
     }

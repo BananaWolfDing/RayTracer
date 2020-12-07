@@ -15,6 +15,7 @@ objects:
     p1: [500, 0, -500]
     p2: [500, 0, 500]
     p3: [-500, 0, -500]
+    mapping: floor
     material:
       diffuse: [0.66, 0.23, 0.81]
       specular: [0.2, 0.14, 0.17]
@@ -27,6 +28,7 @@ objects:
     p1: [-500, 0, 500]
     p2: [500, 0, 500]
     p3: [-500, 0, -500]
+    mapping: floor
     material:
       diffuse: [0.66, 0.23, 0.81]
       specular: [0.2, 0.14, 0.17]

@@ -14,7 +14,13 @@ class HitRecord {
     Material mat;
 public:
     HitRecord();
-    HitRecord(float t, glm::vec3 p, glm::vec3 n, Material mat = Material());
+    HitRecord(
+      float t,
+      glm::vec3 p,
+      glm::vec3 n,
+      glm::vec3 bump = glm::vec3(),
+      Material mat = Material()
+    );
 
     void setMaterial(Material mat);
 

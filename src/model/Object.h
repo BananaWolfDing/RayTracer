@@ -6,13 +6,16 @@
 
 #include "../render/HitRecord.h"
 #include "../render/Ray.h"
+#include "bump/BumpMapping.h"
 #include "BoundingBox.h"
 
 class Object {
 protected:
     Material mat;
+    mapping *bump_mapping = &plain_mapping;
 public:
     void setMaterial(Material mat);
+    void setMapping(mapping *map);
 
     virtual HitRecord hit(Ray ray, float tmin, float tmax) {
         return HitRecord();
