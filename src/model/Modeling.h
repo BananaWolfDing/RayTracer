@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include "Scene.h"
 #include "Light.h"
+#include "../spacetime/Spacetime.h"
 #include "yaml-cpp/yaml.h"
 
 
@@ -41,6 +42,8 @@ public:
   Scene *getScene(std::vector<Object *> &objList) const;
   std::list<Light *> getLights() const;
   Observer getObserver() const;
+  Spacetime* getSpacetime() const;
+
 };
 
 

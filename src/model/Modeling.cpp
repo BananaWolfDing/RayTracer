@@ -9,6 +9,9 @@
 #include "Triangle.h"
 #include "Material.h"
 
+#include "../spacetime/SpacetimeFlat.h"
+#include "../spacetime/SpacetimeKerr.h"
+
 
 Model::Model(const std::string &filename) {
   info = YAML::LoadFile(filename);
@@ -217,4 +220,43 @@ Observer Model::getObserver() const {
   catch (std::exception e) {
     throw ModelingException("Observer Error.");
   }
+}
+
+Spacetime* Model::getSpacetime() const
+{
+  if (!info["spacetime"] || info["spacetime"].IsNull()) {
+  	return new SpacetimeFlat;
+  }
+
+  auto obj = info["spacetime"];
+
+	if (obj["type"].as<std::string>() == "flat")
+		return new SpacetimeFlat;
+	else if (obj["type"].as<std::string>() == "kerr")
+	{
+		float const spin = obj["spin"] ? obj["spin"].as<float>() : 0.5f;
+		float const radius = obj["radius"] ? obj["radius"].as<float>() : 0.1f;
+		float const c = obj["c"] ? obj["c"].as<float>() : 10.f;
+		float const tolerance = obj["tolerance"] ? obj["tolerance"].as<float>() : 5e-2;
+		glm::vec3 const position = obj["position"]
+			? glm::vec3(
+					obj["position"][0].as<float>(),
+					obj["position"][1].as<float>(),
+					obj["position"][2].as<float>()
+				)
+			: glm::vec3();
+		bool const eulerSolver = obj["solver"] && obj["solver"].as<std::string>() == "euler";
+		int const maxSteps = obj["maxsteps"] ? obj["maxsteps"].as<int>() : 1000;
+		float const stepsize = obj["stepsize"] ? obj["stepsize"].as<float>() : 1e-1f;
+
+		float const mass = radius * c * c / (2 * /*G=*/6.674e-11f);
+		std::cout << "Black hole mass: " << mass << " kg\n";
+
+		if (radius == 0.f)
+			return new SpacetimeFlat;
+		else
+			return new SpacetimeKerr(position,spin, radius, c, tolerance, eulerSolver, maxSteps, stepsize);
+	}
+
+  throw ModelingException("Unknown spacetime type");
 }

@@ -56,6 +56,35 @@ Scene::Scene() {
             25
             ));
     items.push_back(s);
+    s = new Sphere(glm::vec3(-10.f, 0.f, -2.f), 3.0f);
+    s->setMaterial(Material(
+            glm::vec3(0, 0.9, 0.467),
+            glm::vec3(0.8, 0.8, 0.8),
+            25
+            ));
+    items.push_back(s);
+    s = new Sphere(glm::vec3(10.f, 0.f, -2.f), 3.0f);
+    s->setMaterial(Material(
+            glm::vec3(0.9, 0.467, 0.0),
+            glm::vec3(0.8, 0.8, 0.8),
+            25
+            ));
+    items.push_back(s);
+
+    s = new Sphere(glm::vec3(0.f, 0.f, -13.f), 2.0f);
+    s->setMaterial(Material(
+            glm::vec3(0.9, 0.0, 0.9),
+            glm::vec3(0.8, 0.8, 0.8),
+            25
+            ));
+    items.push_back(s);
+    s = new Sphere(glm::vec3(0.f, 0.f, -17.f), 2.0f);
+    s->setMaterial(Material(
+            glm::vec3(0.9, 0.0, 0.9),
+            glm::vec3(0.8, 0.8, 0.8),
+            25
+            ));
+    items.push_back(s);
 }
 
 Scene::Scene(

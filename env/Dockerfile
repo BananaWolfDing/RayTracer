@@ -6,6 +6,8 @@ RUN apt-get update -y &&\
 		git \
 		g++ \
 		gcc-9 \
+		gdb \
+		valgrind \
 		cmake \
 		ninja-build \
 		libboost-all-dev \
