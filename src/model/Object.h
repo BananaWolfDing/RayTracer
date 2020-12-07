@@ -6,6 +6,7 @@
 
 #include "../render/HitRecord.h"
 #include "../render/Ray.h"
+#include "BoundingBox.h"
 
 class Object {
 protected:
@@ -15,6 +16,10 @@ public:
 
     virtual HitRecord hit(Ray ray, float tmin, float tmax) {
         return HitRecord();
+    }
+
+    virtual bool intersectBox(BoundingBox box) {
+        return false;
     }
 };
 

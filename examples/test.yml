@@ -1,0 +1,91 @@
+objects:
+  black_hole:
+    type: sphere
+    position: [0, 18, 0]
+    radius: 10.0
+    material:
+      diffuse: [0, 0, 0]
+      specular: [0, 0, 0]
+      shininess: 0
+      reflection: 0
+      refraction: 0
+      transparent: false
+  floor1:
+    type: triangle
+    p1: [500, 0, -500]
+    p2: [500, 0, 500]
+    p3: [-500, 0, -500]
+    material:
+      diffuse: [0.66, 0.23, 0.81]
+      specular: [0.2, 0.14, 0.17]
+      shininess: 0
+      reflection: 0
+      refraction: 0
+      transparent: false
+  floor2:
+    type: triangle
+    p1: [-500, 0, 500]
+    p2: [500, 0, 500]
+    p3: [-500, 0, -500]
+    material:
+      diffuse: [0.66, 0.23, 0.81]
+      specular: [0.2, 0.14, 0.17]
+      shininess: 0
+      reflection: 0
+      refraction: 0
+      transparent: false
+  pillar:
+    type: cube
+    position: [-4, 0, -4]
+    size: 8
+    material:
+      diffuse: [0.2, 0.2, 0.2]
+      specular: [0.9, 0.9, 0.9]
+      shininess: 50
+      reflection: 0.2
+      refraction: 0.7
+      transparent: true
+  ball_behind:
+    type: sphere
+    position: [-20, 7, 0]
+    radius: 4.5
+    material:
+      diffuse: [0.29, 0.77, 0.64]
+      specular: [0.4, 0.59, 0.36]
+      shininess: 6
+      reflection: 0.3
+      refraction: 0
+      transparent: false
+  ball_front:
+    type: sphere
+    position: [20, 7, 0]
+    radius: 4.5
+    material:
+      diffuse: [0, 0, 0.74]
+      specular: [0, 0, 0.88]
+      shininess: 5
+      reflection: 0.2
+      refraction: 0.7
+      transparent: true
+      
+lights:
+  light1:
+    position: [100, 100, 60]
+    color: [1, 1, 1]
+    falloff: [1, 0, 0]
+  light2:
+    position: [100, 100, -60]
+    color: [1, 1, 1]
+    falloff: [1, 0, 0]
+
+observer:
+  eye: [0, 10, 100]
+  ambient: [0.1, 0.1, 0.1]
+  up: [0, 1, 0]
+  view: [0, 0, -1]
+  fovy: 50
+
+space:
+  x: [-600, 600]
+  y: [-600, 600]
+  z: [-600, 600]

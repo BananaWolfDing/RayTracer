@@ -2,13 +2,43 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 
+#include <boost/program_options.hpp>
+
+
 #include "../spacetime/SpacetimeKerr.h"
 
 int main(int argc, char* argv[])
 {
-	SpacetimeKerr spacetime(.05f, 10.f, 10.f, 5e-2);
+	namespace bpo = boost::program_options;
+	bpo::options_description desc("Geodesic test utility");
+	desc.add_options()
+		("metric", bpo::value<std::string>()->default_value("kerr"), "Metric used (only kerr is supported)")
+		("steps,n", bpo::value<int>()->default_value(1000), "Number of steps")
+		("spin", bpo::value<float>()->default_value(.05f), "Kerr spin")
+		("radius", bpo::value<float>()->default_value(10.f), "Schwarzschild Radius")
+		("c", bpo::value<float>()->default_value(10.f), "Speed of light")
+		("tolerance", bpo::value<float>()->default_value(5e-2f), "Tolerance")
+		("px", bpo::value<float>()->multitoken(), "Emission x (list)")
+		("py", bpo::value<float>()->multitoken(), "Emission y (list)")
+		("pz", bpo::value<float>()->multitoken(), "Emission z (list)")
+		("help,h", "Produce help message")
+	;
+	bpo::variables_map vm;
+	bpo::store(bpo::parse_command_line(argc, argv, desc), vm);
 
-	int const nSteps = 1000;
+	if (vm.count("help"))
+	{	
+		std::cout << desc << std::endl;
+		return 0;
+	}
+	SpacetimeKerr spacetime(
+		vm["spin"].as<float>(),
+		vm["radius"].as<float>(),
+		vm["c"].as<float>(),
+		vm["tolerance"].as<float>()
+	);
+
+	int const nSteps = vm["steps"].as<int>();
 
 	printf("i,step,x,y,z,dx,dy,dz,h\n");
 	for (int i = 0; i < 10; ++i)

@@ -2,14 +2,27 @@
 
 ## Build
 
-To build
+To build (this actually runs `docker-compose`)
 ```sh
-docker-compose up
+../build.sh
 ```
 
 ## Run
 
-To run
+To see the manual:
 ```sh
-./exec.sh ARGUMENTS
+./exec.sh --help
+```
+
+Example:
+```sh
+./exec.sh --input examples/simple.yml
+```
+
+## Diagnostics
+
+The Geodesic utility can trace a list of geodesics in the Kerr spacetime and
+output the path in csv format.
+```sh
+./test.sh Geodesic --help
 ```

@@ -102,7 +102,6 @@ bool BoundingBox::hitBox(Ray ray, float tmin, float tmax) const {
     return false;
 }
 
-
 bool BoundingBox::contains(glm::vec3 const& v) const
 {
 	return

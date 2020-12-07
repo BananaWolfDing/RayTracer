@@ -16,6 +16,7 @@ public:
     Triangle();
     Triangle(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
     HitRecord hit(Ray ray, float tmin, float tmax) override;
+    bool intersectBox(BoundingBox box) override;
 };
 
 

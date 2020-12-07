@@ -13,6 +13,7 @@ find_package(Boost COMPONENTS
 	thread
 	timer
 	REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 if (${Boost_FOUND})
 	include_directories(${Boost_INCLUDE_DIRS})

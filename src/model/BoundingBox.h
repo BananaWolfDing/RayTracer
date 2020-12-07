@@ -8,22 +8,24 @@
 
 #include "../render/Ray.h"
 
-class BoundingBox {
-    float x1, x2, y1, y2, z1, z2;
+class BoundingBox
+{
 public:
-    BoundingBox();
-    BoundingBox(float x1, float x2, float y1, float y2, float z1, float z2);
+	float x1, x2, y1, y2, z1, z2;
 
-    bool hitBox(Ray ray, float tmin, float tmax) const;
+	BoundingBox();
+	BoundingBox(float x1, float x2, float y1, float y2, float z1, float z2);
 
-    bool contains(glm::vec3 const&) const;
+	bool hitBox(Ray ray, float tmin, float tmax) const;
 
-    BoundingBox expand(float size) const;
+	bool contains(glm::vec3 const&) const;
 
-		/**
-		 * Add a point into the bounding box
-		 */
-    BoundingBox operator|(glm::vec3 const&) const;
+	BoundingBox expand(float size) const;
+
+	/**
+	 * Add a point into the bounding box
+	 */
+	BoundingBox operator|(glm::vec3 const&) const;
 };
 
 

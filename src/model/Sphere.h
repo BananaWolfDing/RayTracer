@@ -13,6 +13,7 @@ class Sphere: public Object {
 public:
     Sphere(glm::vec3 p, float r);
     HitRecord hit(Ray ray, float tmin, float tmax) override;
+    bool intersectBox(BoundingBox box) override;
 };
 
 
