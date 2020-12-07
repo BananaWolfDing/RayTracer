@@ -8,6 +8,10 @@
 class Spacetime
 {
 public:
+	Spacetime(int maxSteps = 1000, float initialStepSize=1e-1f)
+		: maxSteps(maxSteps)
+		, initialStepSize(initialStepSize)
+	{}
 	virtual ~Spacetime() = default;
 
 	/**
@@ -18,6 +22,12 @@ public:
 	 */
 	virtual Ray
 	geodesic(Ray const& ray, float* const maxTime) = 0;
+
+	int getMaxSteps() const { return maxSteps; }
+	float getInitialStepSize() const { return initialStepSize; }
+private:
+	int maxSteps;
+	float initialStepSize;
 };
 
 #endif // !SPACETIME_SPACETIME_H

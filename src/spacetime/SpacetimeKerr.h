@@ -8,7 +8,9 @@
 class SpacetimeKerr final: public Spacetime
 {
 public:
-	SpacetimeKerr(glm::vec3 position, float spin, float rs, float c, float epsilon=5e-2);
+	SpacetimeKerr(glm::vec3 position, float spin, float rs, float c,
+			float epsilon=5e-2, bool eulerSolver=false,
+			int maxSteps=1000, float initialStepSize = 1e-1f);
 
 	virtual Ray
 	geodesic(Ray const& ray, float* const maxTime) override;
@@ -43,6 +45,8 @@ private:
 	float horizon;
 
 	float epsilon;
+
+	bool eulerSolver; ///< If true, use Euler instead of Runge-Kutta
 };
 
 #endif // !SPACETIME_SPACETIMEKERR_H

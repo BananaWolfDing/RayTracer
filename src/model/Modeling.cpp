@@ -219,7 +219,7 @@ Spacetime* Model::getSpacetime() const
 	{
 		float const spin = obj["spin"] ? obj["spin"].as<float>() : 0.5f;
 		float const radius = obj["radius"] ? obj["radius"].as<float>() : 0.1f;
-		float const c = obj["c"] ? obj["c"].as<float>() : 100.f;
+		float const c = obj["c"] ? obj["c"].as<float>() : 10.f;
 		float const tolerance = obj["tolerance"] ? obj["tolerance"].as<float>() : 5e-2;
 		glm::vec3 const position = obj["position"]
 			? glm::vec3(
@@ -228,8 +228,17 @@ Spacetime* Model::getSpacetime() const
 					obj["position"][2].as<float>()
 				)
 			: glm::vec3();
+		bool const eulerSolver = obj["solver"] && obj["solver"].as<std::string>() == "euler";
+		int const maxSteps = obj["maxsteps"] ? obj["maxsteps"].as<int>() : 1000;
+		float const stepsize = obj["stepsize"] ? obj["stepsize"].as<float>() : 1e-1f;
 
-		return new SpacetimeKerr(position,spin, radius, c, tolerance);
+		float const mass = radius * c * c / (2 * 6.674e-11f);
+		std::cout << "Black hole mass: " << mass << "kg\n";
+
+		if (radius == 0.f)
+			return new SpacetimeFlat;
+		else
+			return new SpacetimeKerr(position,spin, radius, c, tolerance, eulerSolver, maxSteps, stepsize);
 	}
 
   throw ModelingException("Unknown spacetime type");

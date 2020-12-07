@@ -6,6 +6,8 @@
 class SpacetimeFlat final: public Spacetime
 {
 public:
+	SpacetimeFlat();
+
 	virtual Ray
 	geodesic(Ray const& ray, float* const maxTime) override;
 };

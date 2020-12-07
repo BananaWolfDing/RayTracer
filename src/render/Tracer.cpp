@@ -44,7 +44,7 @@ Tracer::Tracer(
         root{scene}, img{img}, eye{eye}, ambient{ambient},
         thread_row{0}, up{up}, fovy{fovy}, view{view},
         lights{lights}, h{img->get_height()}, w{img->get_width()},
-        spacetime{spacetime}, universe_box{(scene->get_box() | eye).expand(100.f)},
+        spacetime{spacetime},
         num_thread(nThreads)
 {
     if (anti_aliasing) {
@@ -82,12 +82,9 @@ void Tracer::Trace_thread() {
         progress = (float) thread_row / h;
         progress_cv.notify_all();
         uint32_t row = thread_row++;
-        if (row >= h) {
-            if (row == h) {
-                std::cout << std::endl;
-            }
-            return;
-        }
+
+        if (row >= h)
+        	return;
 
         glm::vec3 front = glm::normalize(view);
         glm::vec3 above = glm::normalize(up);
@@ -123,38 +120,46 @@ void Tracer::Trace_thread() {
     }
 }
 
-glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
-	int steps = 0;
-	float maxTime = 0.1;
+bool Tracer::rayHit(Ray ray, HitRecord* const record)
+{
+	int steps = spacetime->getMaxSteps();
+	float maxTime = spacetime->getInitialStepSize();
 
 	while (!std::isnan(maxTime)
-		&& universe_box.contains(ray.getOrigin())
-		&& steps < 1000
+		&& root->get_box().contains(ray.getOrigin())
+		&& steps > 0
 		)
 	{
-    HitRecord record = root->hit(ray, 1e-3, std::numeric_limits<float>::max());
-    ++steps;
+    *record = root->hit(ray, 1e-3, maxTime);
+    --steps;
 
-    if (record.isHit()) {
-        Material mat = record.getMaterial();
-        glm::vec3 ds_color = diffuse_specular(ray, record);
-        glm::vec3 color;
-        if (secondary < secondary_limit) {
-            glm::vec3 rr_color = reflect_refract(ray, record, secondary);
-            color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
-        }
-        else {
-            color = ds_color;
-        }
-        return color + mat.diffuse() * ambient;
-    }
+    if (record->isHit())
+    	return true;
 
 		if (std::isinf(maxTime))
 			// Cannot hit anything despite infinite tolerance
 			break;
 		ray = spacetime->geodesic(ray, &maxTime);
   }
-  return glm::vec3(0.7, 0.7, 0.7);
+  return false;
+}
+glm::vec3 Tracer::trace(Ray ray, uint32_t secondary) {
+	HitRecord record;
+	if (!rayHit(ray, &record))
+	{
+		return glm::vec3(0.7, 0.7, 0.7);
+	}
+  Material mat = record.getMaterial();
+  glm::vec3 ds_color = diffuse_specular(ray, record);
+  glm::vec3 color;
+  if (secondary < secondary_limit) {
+      glm::vec3 rr_color = reflect_refract(ray, record, secondary);
+      color = glm::mix(ds_color, rr_color, mat.reflect() + mat.refract());
+  }
+  else {
+      color = ds_color;
+  }
+  return color + mat.diffuse() * ambient;
 }
 
 glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
@@ -163,6 +168,10 @@ glm::vec3 Tracer::diffuse_specular(Ray ray, HitRecord hitRecord) {
         glm::vec3 l = glm::normalize(light->position - hitRecord.getPoint());
         Ray ray_out(hitRecord.getPoint(), l);
         HitRecord hit = root->hit(ray_out, 1e-3, std::numeric_limits<float>::max());
+
+        // Warning: Do not enable spacetime tracing here unless we can solve
+        // the direction problem
+        //if (rayHit(ray_out, &hit)) {
         if (hit.isHit()) {
             float len_hit = glm::length(hit.getPoint() - hitRecord.getPoint());
             float len_light = glm::length(light->position - hitRecord.getPoint());

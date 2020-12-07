@@ -21,6 +21,11 @@ Example:
 
 ## Diagnostics
 
+To debug:
+```sh
+./debug.sh gdb -ex run --args build/RayTracer ARGS
+```
+
 The Geodesic utility can trace a list of geodesics in the Kerr spacetime and
 output the path in csv format.
 ```sh

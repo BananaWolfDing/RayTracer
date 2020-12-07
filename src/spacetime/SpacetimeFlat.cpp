@@ -2,6 +2,10 @@
 
 #include <cassert>
 
+SpacetimeFlat::SpacetimeFlat()
+	: Spacetime(2, std::numeric_limits<float>::infinity())
+{
+}
 Ray SpacetimeFlat::geodesic(Ray const& ray, float* const maxTime)
 {
 	assert(std::isfinite(*maxTime));

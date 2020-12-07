@@ -25,11 +25,11 @@ namespace
 		
 		float const top1 = x.x*x.x + x.y*x.y;
 		float const top2 = x.z*x.z;
-		float const nominal_r = top1+top2;
+		float const nominal_r = std::sqrt(top1+top2);
 		if (nominal_r < 1e-5f)
 		{
 #ifdef DEBUG_GEODESIC
-			std::cerr << "kerr_schild_r NaN\n";
+			std::cerr << "kerr_schild_r NaN1\n";
 #endif
 			return std::nanf("");
 		}
@@ -39,7 +39,14 @@ namespace
 			return top1 / (r2 + a*a) + top2 / r2 - 1.f;
 		};
 		auto tol = [&](float min, float max) { return std::abs(max - min) < 1e-3; };
-		auto result = boost::math::tools::bisect(target, /*horizon*/ 1e-5f, nominal_r+1e-5f, tol);
+		if (target(1e-5f) < 0.f)
+		{
+#ifdef DEBUG_GEODESIC
+			std::cerr << "kerr_schild_r NaN2\n";
+#endif
+			return std::nanf("");
+		}
+		auto result = boost::math::tools::bisect(target, /*horizon*/ 1e-5f, nominal_r+1.f, tol);
 		return 0.5f * (result.first + result.second);
 	}
 
@@ -174,12 +181,16 @@ namespace
 		return result;
 	}
 }
-SpacetimeKerr::SpacetimeKerr(glm::vec3 position, float spin, float rs, float c, float epsilon)
-	: position(position)
+SpacetimeKerr::SpacetimeKerr(glm::vec3 position, float spin, float rs, float c,
+		float epsilon, bool eulerSolver,
+		int maxSteps, float initialStepSize)
+	: Spacetime(maxSteps, initialStepSize)
+	, position(position)
 	, spin(spin)
 	, rs(rs)
 	, c(c)
 	, epsilon(epsilon)
+	, eulerSolver(eulerSolver)
 {
 	assert(0 < c);
 	assert(0 <= rs);
@@ -218,11 +229,28 @@ Ray SpacetimeKerr::geodesic(Ray const& ray, float* const h)
 		*h = std::nanf("");
 		return ray;
 	}
+	if (r <= 0.5 * (horizon + std::sqrt(horizon*horizon - 4*a*a)))
+	{
+#ifdef DEBUG_GEODESIC
+		std::cerr << "Kerr:geodesic Fell into BH\n";
+		*h = std::nanf("");
+		return ray;
+#endif
+	}
 
-	runge_kutta_fehlberg(
-		[this](glm::vec4 const& x, glm::vec4 const& dx){ return this->dx2ds(x, dx); },
-		[](glm::vec4 const& x){ return vec_max(glm::abs(x)); },
-		epsilon, o4, d4, *h);
+	if (eulerSolver)
+	{
+		glm::vec4 const a4 = dx2ds(o4, d4);
+		o4 += d4 * *h;
+		//d4 += a4 * *h;
+	}
+	else
+	{
+		runge_kutta_fehlberg(
+			[this](glm::vec4 const& x, glm::vec4 const& dx){ return this->dx2ds(x, dx); },
+			[](glm::vec4 const& x){ return vec_max(glm::abs(x)); },
+			epsilon, o4, d4, *h);
+	}
 #ifdef DEBUG_GEODESIC
 	if (std::isnan(*h))
 	{
@@ -233,8 +261,11 @@ Ray SpacetimeKerr::geodesic(Ray const& ray, float* const h)
 	// Re-parametrise to prevent direction from blowing up
 	glm::vec3 d3(d4.x, d4.z, d4.y);
 	float const d3norm = glm::l2Norm(d3);
-	*h *= d3norm;
-	*h = std::max(std::min(*h, 10.f), 1e-3f);
+	if (!eulerSolver)
+	{
+		*h *= d3norm;
+		*h = std::max(std::min(*h, 1.f), 1e-3f);
+	}
 	d3 /= d3norm;
 
 	Ray result(glm::vec3(o4.x, o4.z, o4.y) + this->position, d3);

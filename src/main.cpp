@@ -73,6 +73,7 @@ int main(int argc, char* argv[])
 	);
 
 	tracer.render();
+	std::cout << "Exporting image to " << vm["output"].as<std::string>() << '\n';
 	img.export_image(vm["output"].as<std::string>());
 
 	for (Object* obj : items)

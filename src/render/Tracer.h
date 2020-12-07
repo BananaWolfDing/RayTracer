@@ -33,13 +33,12 @@ class Tracer {
     uint32_t secondary_limit;
     std::atomic_uint thread_row;
 
-    BoundingBox universe_box;
-
 		std::atomic<float> progress;
 		std::mutex progress_lock;
 		std::condition_variable progress_cv;
 
     void Trace_thread();
+    bool rayHit(Ray ray, HitRecord* const hitRecord);
     glm::vec3 trace(Ray ray, uint32_t secondary = 0);
     glm::vec3 diffuse_specular(Ray ray, HitRecord hitRecord);
     glm::vec3 reflect_refract(Ray ray, HitRecord hitRecord, uint32_t secondary = 0);

@@ -1,8 +1,13 @@
 spacetime:
   type: kerr
-  spin: 0.001
-  radius: 0.001
+  spin: 0.01
+  radius: 0.01
+  c: 4
+  stepsize: 1
+  maxsteps: 5000
+  solver: euler
   position: [0, 18, 0]
+
 objects:
   black_hole:
     type: sphere
@@ -50,9 +55,9 @@ objects:
       reflection: 0.2
       refraction: 0.7
       transparent: true
-  ball_behind:
+  ball_1:
     type: sphere
-    position: [-20, 7, 0]
+    position: [-20, 18, 0]
     radius: 4.5
     material:
       diffuse: [0.29, 0.77, 0.64]
@@ -61,9 +66,31 @@ objects:
       reflection: 0.3
       refraction: 0
       transparent: false
-  ball_front:
+  ball_1b:
     type: sphere
-    position: [20, 7, 0]
+    position: [-7, 18, -7]
+    radius: 4.5
+    material:
+      diffuse: [0.29, 0.77, 0.64]
+      specular: [0.4, 0.59, 0.36]
+      shininess: 6
+      reflection: 0.3
+      refraction: 0
+      transparent: false
+  ball_2:
+    type: sphere
+    position: [20, 18, 0]
+    radius: 4.5
+    material:
+      diffuse: [0, 0, 0.74]
+      specular: [0, 0, 0.88]
+      shininess: 5
+      reflection: 0.2
+      refraction: 0.7
+      transparent: true
+  ball_2:
+    type: sphere
+    position: [7, 18, -7]
     radius: 4.5
     material:
       diffuse: [0, 0, 0.74]
@@ -84,10 +111,10 @@ lights:
     falloff: [1, 0, 0]
 
 observer:
-  eye: [0, 10, 100]
+  eye: [0, 30, 100]
   ambient: [0.1, 0.1, 0.1]
   up: [0, 1, 0]
-  view: [0, 0, -1]
+  view: [0, -.1, -.8]
   fovy: 50
 
 space:
